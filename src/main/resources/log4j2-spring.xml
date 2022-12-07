@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Configuration>
+
+	<!-- Setting up log path and log file name -->
+	<Properties>
+	<property name="LOG_PATH" value="./logs" />
+	<property name="LOG_FILE_NAME" value="application-log4j2" />
+	</Properties>
+	
+	<!-- Setting up logging pattern for console logging -->
+	<Appenders>
+		<Console name="ConsoleOutput" target="SYSTEM_OUT">
+			<PatternLayout
+				pattern="%style{%d{ISO8601}}{white} %highlight{%-5level} [%style{%t}{bright,yellow}] : %msg%n%throwable"
+				disableAnsi="false" />
+		</Console>
+
+		<!-- Setting the filename and logging pattern for log file. Also setting
+			up a rolling policy with rolling done daily and when file size is 10MB -->
+		<RollingFile name="LogFile"
+			fileName="${LOG_PATH}/${LOG_FILE_NAME}.log"
+			filePattern="${LOG_PATH}/$${date:yyyy-MM}/application-log4j2-%d{dd-MMMM-yyyy}-%i.log.gz">
+			<PatternLayout>
+				<pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level : %msg%n
+				</pattern>
+			</PatternLayout>
+			<Policies>
+				<OnStartupTriggeringPolicy />
+				<SizeBasedTriggeringPolicy size="10 MB" />
+				<TimeBasedTriggeringPolicy />
+			</Policies>
+		</RollingFile>
+	</Appenders>
+
+	<Loggers>
+		
+		<!-- Logging at INFO level -->
+		<Root level="info">
+			<AppenderRef ref="ConsoleOutput" />
+			<AppenderRef ref="LogFile" />
+		</Root>
+
+		<!-- Logging at TRACE level -->
+		<logger name="com.log" level="trace" additivity="false">
+			<appender-ref ref="LogFile" />
+			<appender-ref ref="ConsoleOutput" />
+		</logger>
+
+	</Loggers>
+
+</Configuration>
